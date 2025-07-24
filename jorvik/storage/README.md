@@ -50,7 +50,7 @@ Now, assume there's a change in the transformation logic in Step 3 — for examp
 
 To validate this change before deployment, Steps 3 and 4 need to be executed in a development environment. The code changes are made in a Git feature branch named order_transform.
 
-![Animation](./imgs/isolation_storage.gif)
+![Animation](imgs/isolation_storage.gif)
 
 ### How Jorvik handles this with Storage Isolation
 When Jorvik's storage isolation is applied, the following behavior occurs under the hood:
