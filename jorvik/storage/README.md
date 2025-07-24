@@ -11,6 +11,23 @@ st.write(df, "/new/path/to/table", format="parquet", mode="overwrite")
 
 ## Storage isolation
 
+In a multi-step ETL pipeline, each step produces an intermediate table that serves as input for downstream transformations. When changes are made to upstream transformation logic, it's often necessary to re-run part or all of the pipeline in a development environment. This introduces two major challenges:
+1. **Data synchronization:** All intermediate tables must be copied from production and kept in sync.
+2. **Development conflicts:** Multiple ongoing developments in the same environment can interfere with each other’s intermediate data.
+
+Jorvik's storage isolation feature addresses these challenges through the following key concepts:
+- Each development effort runs in its own contained environment, called an **Isolation Context**, configured via an [Isolation Provider](#isolation-provider)
+- When a table is **written** to storage, it is stored in a development-specific (isolated) path.
+- When a table is **read** from storage:
+    - If it exists in the isolated path, it is read from there.
+    - Otherwise, it falls back to the production storage path.
+
+This approach offers the following advantages:
+- **No manual data copying:** Avoid the need to copy and sync intermediate tables from production.
+- **Isolated development:** Prevent interference between parallel development efforts.
+- **Seamless path handling:** Write once, run anywhere — the same code works in both development and production environments without path changes.
+- **Save development storage:** Reuse production data wherever possible, reducing the need to duplicate large datasets in development environments.
+
 ### Isolated storage
 - TO BE DOCUMENTED: `IsolatedStorage` class
 
