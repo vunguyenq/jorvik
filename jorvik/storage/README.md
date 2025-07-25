@@ -40,15 +40,12 @@ The pipeline consists of four steps, each implemented in a separate code file. E
 | 3    | Transform sales orders    | Output of step 2         | `/mnt/silver/sales_orders`      |
 | 4    | Create sales report       | Outputs of steps 1 & 3   | `/mnt/gold/sales_report`        |
 
-Now, assume there's a change in the transformation logic in **Step 3** — for example, introducing a new _loyalty discount amount_ field in the sales orders. This modification impacts not only the refined sales data but also the final sales report.
-
-To validate this change before deployment, Steps 3 and 4 need to be executed in a development environment. The code changes are made in a Git feature branch named `order_transform`.
 
 ### Scenario
 
 Now, assume there's a change in the transformation logic in Step 3 — for example, introducing a new loyalty discount amount field in the sales orders. This modification impacts not only the refined sales data but also the final sales report.
 
-To validate this change before deployment, Steps 3 and 4 need to be executed in a development environment. The code changes are made in a Git feature branch named order_transform.
+To validate this change before deployment, Steps 3 and 4 need to be executed in a development environment. The code changes are made in a Git feature branch named `order_transform`.
 
 ![Animation](imgs/isolation_storage.gif)
 
