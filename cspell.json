@@ -4,6 +4,7 @@
         "jorvik",
         "noqa",
         "pyspark",
+        "pytest",
         "isin",
         "dbfs",
         "featureisolation"
