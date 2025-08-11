@@ -1,6 +1,6 @@
 '''This module provides utility functions to interact with Databricks built in utilities (default spark context, dbutils).'''
 import json
-from typing import Any, List
+from typing import Any, List, Callable
 
 from pyspark.sql import SparkSession
 from pyspark.errors.exceptions.captured import AnalysisException
@@ -88,13 +88,16 @@ def sanitize_dbfs_path(path: str) -> str:
     return path
 
 def scan_delta_tables(dir_path: str, max_level: int = 5,
-                      level: int = 0, exclude_paths: List[str] = []) -> List[str]:
+                      level: int = 0, exclude_paths: List[str] = [],
+                      path_action: Callable = None) -> List[str]:
     """ Recursively scans a directory and detect delta tables in subdirectories.
     Args:
         dir_path (str): The directory path to scan.
         max_level (int): Maximum depth of subdirectory scanning. Default is 5.
         level (int): Current recursion depth.
         exclude_paths (List[str]): List of paths to exclude from scanning.
+        path_action (Callable): Optional function to apply to each detected delta table path.
+                                For example register table to Hive Metastore, Optimize, Vacuum, etc.
     Returns:
         List[str]: List of detected delta table paths.
     """
@@ -113,6 +116,8 @@ def scan_delta_tables(dir_path: str, max_level: int = 5,
     try:
         df = spark.read.format("delta").load(dir_path)
         if df is not None:
+            if path_action:
+                path_action(dir_path)
             return [dir_path]
     except AnalysisException:
         pass  # Not a delta table, continue scanning
