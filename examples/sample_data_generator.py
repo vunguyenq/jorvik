@@ -2,14 +2,14 @@
 import pandas as pd
 import numpy as np
 from datetime import datetime
-from jorvik import storage
-from pyspark.sql import SparkSession
+import sqlite3
+from pathlib import Path
 
 # Modify these constants to control data volume and location
 N_CUSTOMERS = 100
 N_TRANSACTIONS = 100_000
-CUSTOMERS_PATH = '/tmp/sources/customers'
-TRANSACTIONS_PATH = '/tmp/sources/transactions'
+CUSTOMERS_PATH = '/tmp/sources/customers.csv'
+TRANSACTIONS_PATH = '/tmp/sources/transactions_db.sqlite'
 
 def random_dates(start: datetime, end: datetime, n: int) -> list[datetime]:
     """Generates a list of random dates between start and end"""
@@ -40,7 +40,7 @@ def generate_customers(num_rows: int) -> pd.DataFrame:
         email = f"{first.lower()}.{last.lower()}@mail.com"
         age = np.random.randint(15, 80)
         city = np.random.choice(cities)
-        reg_date = random_dates(start_date, end_date, 1)[0]
+        reg_date = random_dates(start_date, end_date, 1)[0].date()
         data.append((customer_id, f"{first} {last}", email, age, city, reg_date))
 
     return pd.DataFrame(data, columns=[
@@ -66,7 +66,14 @@ def generate_transactions(num_rows: int, n_customers: int = N_CUSTOMERS) -> pd.D
 if __name__ == "__main__":
     customers = generate_customers(N_CUSTOMERS)
     transactions = generate_transactions(N_TRANSACTIONS, N_CUSTOMERS)
-    st = storage.configure()
-    spark = SparkSession.getActiveSession()
-    st.write(spark.createDataFrame(customers), CUSTOMERS_PATH, format="delta", mode="overwrite")
-    st.write(spark.createDataFrame(transactions), TRANSACTIONS_PATH, format="delta", mode="overwrite")
+
+    # Create path
+    path = Path('/tmp/sources')
+    path.mkdir(parents=True, exist_ok=True)
+
+    # Save customers to CSV
+    customers.to_csv(CUSTOMERS_PATH, index=False)
+
+    # Save transactions to SQLite database
+    with sqlite3.connect(TRANSACTIONS_PATH) as conn:
+        transactions.to_sql('transactions', conn, if_exists='replace', index=False)
