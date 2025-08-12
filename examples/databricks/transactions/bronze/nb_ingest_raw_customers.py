@@ -3,7 +3,7 @@
 # MAGIC # Customers Ingestion
 # MAGIC
 # MAGIC This notebook gets customer data from file input and stores as delta table.
-# MAGIC Run the script /`examples/sample_data_generator.py` first to generate the data.
+# MAGIC Run the script `/examples/sample_data_generator.py` first to generate the data.
 # MAGIC Modify the data volume and location as needed.
 # MAGIC In a realistic scenario this notebook would fetch data from a production system for example:
 # MAGIC - It could listen to an event topic and accumulate data in a Delta Table.
