@@ -30,3 +30,6 @@ pip install -r requirements.txt
 pip install pytest
 pytest examples/databricks/transactions/tests
 ```
+
+## Isolated storage in Dev environment
+Content to be added
