@@ -28,7 +28,7 @@ result = FileOutput(
 
 # COMMAND ----------
 input = FileInput(
-    path="/dbfs/tmp/sources/customers.csv",
+    path="/tmp/sources/customers.csv",
     format="csv",
     schema=raw_customers.schema,
 )
