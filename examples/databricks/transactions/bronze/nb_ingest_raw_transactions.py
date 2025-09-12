@@ -16,6 +16,8 @@
 
 import pandas as pd
 import sqlite3
+from pyspark.sql import DataFrame, functions as F
+from pyspark.sql.types import IntegerType, FloatType
 from jorvik.pipelines import etl, Input, FileOutput
 from jorvik.utils import databricks
 from examples.databricks.transactions.bronze.schemas import raw_transactions
@@ -32,6 +34,12 @@ result = FileOutput(
 
 # COMMAND ----------
 
+def cast_data_types(df: DataFrame) -> DataFrame:
+    return (df
+            .withColumn("quantity", F.col("quantity").cast(IntegerType()))
+            .withColumn("price", F.col("price").cast(FloatType()))
+            )
+
 class DatabaseInput(Input):
     schema = raw_transactions.schema
 
@@ -39,9 +47,9 @@ class DatabaseInput(Input):
         db_path = '/dbfs/tmp/sources/transactions_db.sqlite'
         sql = "SELECT * FROM transactions"
         with sqlite3.connect(db_path) as conn:
-            transactions = pd.read_sql_query(sql, conn)
-        return databricks.get_spark().createDataFrame(transactions)
-
+            transactions = pd.read_sql_query(sql, conn, parse_dates=['timestamp'])
+        transactions = databricks.get_spark().createDataFrame(transactions)
+        return cast_data_types(transactions)
 
 # COMMAND ----------
 
