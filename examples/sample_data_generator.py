@@ -50,7 +50,7 @@ def generate_customers(num_rows: int = N_CUSTOMERS) -> pd.DataFrame:
         "customer_id", "name", "email", "age", "city", "registration_date"
     ])
 
-def generate_transactions(num_rows: int, n_customers: int = N_CUSTOMERS) -> pd.DataFrame:
+def generate_transactions(num_rows: int = N_TRANSACTIONS, n_customers: int = N_CUSTOMERS) -> pd.DataFrame:
     """Generates a DataFrame of dummy transaction data"""
     start_date = datetime(2022, 1, 1, 0, 0, 0)
     end_date = datetime(2025, 6, 1, 0, 0, 0)
