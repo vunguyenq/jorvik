@@ -46,9 +46,9 @@ def generate_customers(num_rows: int = N_CUSTOMERS) -> pd.DataFrame:
         reg_date = random_dates(start_date, end_date, 1)[0].date()
         data.append((customer_id, f"{first} {last}", email, age, city, reg_date))
 
-    return pd.DataFrame(data, columns=[
-        "customer_id", "name", "email", "age", "city", "registration_date"
-    ])
+    customers = pd.DataFrame(data, columns=["customer_id", "name", "email", "age", "city", "registration_date"])
+    customers['customer_id'] = 'c_' + customers['customer_id'].astype(str)
+    return customers
 
 def generate_transactions(num_rows: int = N_TRANSACTIONS, n_customers: int = N_CUSTOMERS) -> pd.DataFrame:
     """Generates a DataFrame of dummy transaction data"""
@@ -64,7 +64,11 @@ def generate_transactions(num_rows: int = N_TRANSACTIONS, n_customers: int = N_C
         "timestamp": random_dates(start_date, end_date, num_rows)
     }
 
-    return pd.DataFrame(data)
+    transactions = pd.DataFrame(data)
+    transactions['transaction_id'] = 't_' + transactions['transaction_id'].astype(str)
+    transactions['customer_id'] = 'c_' + transactions['customer_id'].astype(str)
+    transactions['product_id'] = 'p_' + transactions['product_id'].astype(str)
+    return transactions
 
 def save_csv_to_dbfs(df: pd.DataFrame, filename: str, dbfs_path: str = DBFS_PATH):
     """Saves data in df (Pandas DataFrame) to DBFS path as CSV"""
