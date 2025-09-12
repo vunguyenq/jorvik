@@ -3,8 +3,8 @@
 # MAGIC # Customers Ingestion
 # MAGIC
 # MAGIC This notebook gets customer data from file input and stores as delta table.
-# MAGIC Run the script `/examples/sample_data_generator.py` first to generate the data.
-# MAGIC Modify the data volume and location as needed.
+# MAGIC Sample data is generated to DBFS storage to simulate a production source.
+# MAGIC Modify data volume and location in `examples.sample_data_generator` as needed.
 # MAGIC In a realistic scenario this notebook would fetch data from a production system for example:
 # MAGIC - It could listen to an event topic and accumulate data in a Delta Table.
 # MAGIC - It could copy data from a transactional Database.
@@ -15,6 +15,7 @@
 
 from jorvik.pipelines import etl, FileInput, FileOutput
 from examples.databricks.transactions.bronze.schemas import raw_customers
+from examples.sample_data_generator import generate_customers, save_csv_to_dbfs
 
 # COMMAND ----------
 
@@ -27,7 +28,7 @@ result = FileOutput(
 
 # COMMAND ----------
 input = FileInput(
-    path="/tmp/sources/customers.csv",
+    path="/dbfs/tmp/sources/customers.csv",
     format="csv",
     schema=raw_customers.schema,
 )
@@ -41,4 +42,5 @@ def ingest(df):
 # COMMAND ----------
 
 if __name__ == "__main__":
+    save_csv_to_dbfs(generate_customers(), 'customers')
     ingest()

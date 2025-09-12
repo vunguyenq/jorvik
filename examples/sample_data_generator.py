@@ -4,12 +4,15 @@ import numpy as np
 from datetime import datetime
 import sqlite3
 from pathlib import Path
+import tempfile
+import shutil
 
 # Modify these constants to control data volume and location
 N_CUSTOMERS = 100
 N_TRANSACTIONS = 100_000
 CUSTOMERS_PATH = '/tmp/sources/customers.csv'
 TRANSACTIONS_PATH = '/tmp/sources/transactions_db.sqlite'
+DBFS_PATH = '/dbfs/tmp/sources'  # For Databricks
 
 def random_dates(start: datetime, end: datetime, n: int) -> list[datetime]:
     """Generates a list of random dates between start and end"""
@@ -17,7 +20,7 @@ def random_dates(start: datetime, end: datetime, n: int) -> list[datetime]:
     end_u = end.timestamp()
     return [datetime.fromtimestamp(np.random.uniform(start_u, end_u)) for _ in range(n)]
 
-def generate_customers(num_rows: int) -> pd.DataFrame:
+def generate_customers(num_rows: int = N_CUSTOMERS) -> pd.DataFrame:
     """Generates a DataFrame of dummy customer data"""
     first_names = [
         "John", "Jane", "Michael", "Emily", "David", "Sarah", "Chris", "Jessica",
@@ -63,17 +66,22 @@ def generate_transactions(num_rows: int, n_customers: int = N_CUSTOMERS) -> pd.D
 
     return pd.DataFrame(data)
 
-if __name__ == "__main__":
-    customers = generate_customers(N_CUSTOMERS)
-    transactions = generate_transactions(N_TRANSACTIONS, N_CUSTOMERS)
+def save_csv_to_dbfs(df: pd.DataFrame, filename: str, dbfs_path: str = DBFS_PATH):
+    """Saves data in df (Pandas DataFrame) to DBFS path as CSV"""
+    path = Path(dbfs_path)
+    path.mkdir(parents=True, exist_ok=True)
+    df.to_csv(f"{dbfs_path}/{filename}.csv", index=False)
 
-    # Create path
-    path = Path('/tmp/sources')
+def save_sqlite_to_dbfs(df: pd.DataFrame, filename: str, dbfs_path: str = DBFS_PATH):
+    """Saves data in df (Pandas DataFrame) to DBFS path as SQLite database"""
+    path = Path(dbfs_path)
     path.mkdir(parents=True, exist_ok=True)
 
-    # Save customers to CSV
-    customers.to_csv(CUSTOMERS_PATH, index=False)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".sqlite") as tmp_file:
+        temp_path = Path(tmp_file.name)
 
-    # Save transactions to SQLite database
-    with sqlite3.connect(TRANSACTIONS_PATH) as conn:
-        transactions.to_sql('transactions', conn, if_exists='replace', index=False)
+    # sqlite connector cannot write directly to DBFS. Write to a temp file and copy.
+    with sqlite3.connect(temp_path) as conn:
+        df.to_sql('transactions', conn, if_exists='replace', index=False)
+    dest_path = f"{dbfs_path}/{filename}.sqlite"
+    shutil.copy(temp_path, dest_path)
