@@ -17,7 +17,7 @@ The example also follows a few more guidelines to help navigating the source cod
 - Dataset schemas are placed on python files in the schemas package so they can be reused.
 
 ## Run sample ETL pipeline
-To run the pipeline in Databricks you can clone the repository in your Databricks workspace. In the "Jobs & Pipelines" page create a job, on the top right corner click the three dots and select edit as yaml, paste the contents of pipeline.yaml file and you are ready to go. The only prerequisite is to mount a cloud storage on the paths `/mount/bronze` and `/mount/silver`
+To run the pipeline in Databricks you can clone the repository in your Databricks workspace. In the "Jobs & Pipelines" page create a job, on the top right corner click the three dots and select edit as yaml, paste the contents of pipeline.yaml file and you are ready to go. The only prerequisite is to mount a cloud storage on the paths `/mount/bronze` and `/mount/silver`.
 
 ## Smoke test
 To run the tests clone the repository and simply run the following commands in the repository's root folder:
