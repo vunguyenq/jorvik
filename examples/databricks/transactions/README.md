@@ -30,5 +30,5 @@ pip install pytest
 pytest examples/databricks/transactions/tests
 ```
 
-## Isolated storage in Dev environment
-To understand how Jorvik Isolation Storage is applied to handle dev environments in this example, refer to readme file
+## Isolation Storage in Dev environment
+To understand how Jorvik Isolation Storage is applied to handle dev environments in this example, refer to [Isolation Storage for Transaction Analysis Pipeline](STORAGE_ISOLATION.md)
