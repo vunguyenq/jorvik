@@ -59,7 +59,7 @@ This scenario is similar to the [Storage Isolation example](../../../jorvik/stor
    Here you’ll find a subdirectory named **`isolated_storage_demo`** (matching the feature branch name).  
    This is the isolated storage space, which contains only the 2 modified silver tables and no bronze tables.  
 
-   ![Architecture Diagram](../../imgs/dev_storage_paths.png)  
+   ![Isolation Storage paths](../../imgs/dev_storage_paths.png)  
 
 7. Explore the two newly created tables inside the isolated storage. These tables now include the new fields introduced by the code changes: `transaction_month_name` and `most_active_month`
-   ![Architecture Diagram](../../imgs/dev_tables.png) 
+   ![Dev tables](../../imgs/dev_tables.png) 
