@@ -31,4 +31,4 @@ pytest examples/databricks/transactions/tests
 ```
 
 ## Isolated storage in Dev environment
-Content to be added
+To understand how Jorvik Isolation Storage is applied to handle dev environments in this example, refer to readme file
